@@ -8,6 +8,9 @@
                     <a href="{{ route('dashboard') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
+                    <a href="{{ route('school.reportdayly') }}">
+                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                    </a>
                 </div>
 
                 <!-- Navigation Links -->
