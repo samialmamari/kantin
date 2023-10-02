@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('schoolIndex', [StudentShopController::class, 'index'])->name('school.index');
     Route::get('schoolStore/{student_id}', [StudentShopController::class, 'store'])->name('school.store');
+    Route::get('Reportdayly', [StudentShopController::class, 'reportdayly'])->name('school.reportdayly');
 });
 
 require __DIR__.'/auth.php';

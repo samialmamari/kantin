@@ -18,7 +18,7 @@ class StudentShopController extends Controller
         $student = \App\Models\student::find($student_id);
         if (!$student) {
             $msg = 'Student_not_found';
-            return view('school.index', ['error' => 'الطالب غير موجود']);
+            return view('school.index', ['error' => ' الطالب غير موجود ']);
         }
         // cheack if student has already attended today
         // get name of student
@@ -26,7 +26,7 @@ class StudentShopController extends Controller
         $student_attend = \App\Models\student_attend:: where('student_id', $student_id)
         ->where('date', now()->format('Y-m-d'))->first();
         if ($student_attend) {
-            $msg = 'الطالب : ' . $student->name . ' حضر اليوم';
+            $msg = 'الطالب : ' . $student->name . ' لقد اخذ وجبتة ';
             return view('school.index', ['error' =>  $msg]);
         }
         $student_attend = new \App\Models\student_attend;
@@ -35,7 +35,16 @@ class StudentShopController extends Controller
         $student_attend->save();
 
         $student_name = $student->name;
-        $msg = 'الطالب : ' . $student_name . ' تم تسجيل حضوره بنجاح';
+        $msg = 'الطالب : ' . $student_name . ' تم تسجيل حضوره بنجاح ';
+
+        // $user_id = auth()->user()->id;
+        // $students_attends = \App\Models\student_attend::where('date', now()->format('Y-m-d'))
+        //     ->whereHas('student', function ($query) use ($user_id) {
+        //         $query->where('school_id', $user_id);
+        //     })->get();
+        // $students = \App\Models\student::all()->where('school_id', $user_id);
+
+
         return view('school.index', ['success'=> 'تم تسجيل حضور الطالب بنجاح']);
     }
 
@@ -45,12 +54,17 @@ class StudentShopController extends Controller
     {
         $user_id = auth()->user()->id;
         $students = \App\Models\student::all() ->where('school_id', $user_id);
-        $student_attends = \App\Models\student_attend::where('date', now()->format('Y-m-d'))
-            ->whereHas('student', function ($query) use ($user_id) {
-                $query->where('school_id', $user_id);
-            })
+        $student_attends = \App\Models\student::whereHas('student_attends', function ($query) {
+            $query->where('date', now()->format('Y-m-d'));
+        })->where('school_id', $user_id)
         ->get();
-        return view('student_shop_report', compact('students', 'student_attends'));
+        $student_attends_count = $student_attends->count();
+        $student_absents = \App\Models\student::whereDoesntHave('student_attends', function ($query) {
+            $query->where('date', now()->format('Y-m-d'));
+        })->where('school_id', $user_id)
+        ->get();
+        $student_absents_count = $student_absents->count();
+        return view('reports.dayly', compact('student_absents', 'student_attends', 'student_attends_count', 'student_absents_count'));
     }
 }
 

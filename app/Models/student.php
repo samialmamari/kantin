@@ -13,4 +13,9 @@ class student extends Model
         'email',
         'password',
     ];
+
+    public function student_attends()
+    {
+        return $this->hasMany(student_attend::class);
+    }
 }

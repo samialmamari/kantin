@@ -12,4 +12,9 @@ class student_attend extends Model
         'student_id',
         'date'
     ];
+
+    public function student()
+    {
+        return $this->belongsTo(student::class);
+    }
 }
